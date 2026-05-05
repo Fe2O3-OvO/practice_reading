@@ -7,9 +7,10 @@
 # bilibili：https://www.bilibili.com/video/BV1dH9QBBEaV/?spm_id_from=333.337.search-card.all.click&vd_source=7bd80c33ab2945435d91a978ef74ba64
 
 # 仓库文件
-| `README.md` | 项目说明文档 |
-| `感知机模型.py` | 感知机算法的Python实现 |
-
+|README.md|项目说明文档|
+|感知机模型.py| 感知机算法的Python实现|
+|打地鼠.html|打地鼠网页游戏实践|
+|老鼠.png|图片文件|
 
 # 提交内容说明
 1.  第一次提交：创建仓库并初始化 `README.md` 文件，搭建项目基础结构。
