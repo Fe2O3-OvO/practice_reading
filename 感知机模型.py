@@ -150,3 +150,4 @@ def plot_decision_boundary(model, X, y):
 plot_decision_boundary(perceptron, X_train, y_train)
 plot_decision_boundary(dual_perceptron, X_train, y_train)
 
+#不知到感知机模型原理能否用图像表示
