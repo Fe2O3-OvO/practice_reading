@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- 添加视口设置 -->
+    <title>打地鼠-附加要求2</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            -webkit-touch-callout: none; /* 禁止iOS上的长按菜单 */
+            -webkit-user-select: none; /* 禁止文本选择 */
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        #gameContainer {
+            text-align: center;
+        }
+        #gameArea {
+            width: 500px;
+            height: 500px;
+            border: 1px solid #000;
+            position: relative;
+            user-select: none;
+        }
+        #mole {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            pointer-events: none; /* 防止图片直接接收点击事件 */
+        }
+        /* 添加图片容器来处理点击事件 */
+        .mole-container {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #roundTimes {
+            margin-top: 20px;
+        }
+        
+        /* 响应式设计，适应手机屏幕 */
+        @media (max-width: 600px) {
+            #gameArea {
+                width: 90vw;
+                height: 90vw;
+                max-width: 500px;
+                max-height: 500px;
+            }
+            #mole,
+            .mole-container {
+                width: 20vw;
+                height: 20vw;
+                max-width: 100px;
+                max-height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h3>击中次数: <span id="hitCount">0</span></h3>
+    <h3>本轮开始时间: <span id="startTime">-</span></h3>
+    <h3>本轮耗时: <span id="elapsedTime">0</span> 秒</h3>
+    <div id="gameArea">
+        <div id="moleContainer" class="mole-container">
+            <img id="mole" src="picture/老鼠.png" alt="地鼠" draggable="false">
+        </div>
+    </div>
+    <div id="roundTimes">
+        <h3>多轮游戏时间信息：</h3>
+        <ul id="roundList"></ul>
+    </div>
+    <script>
+        const mole = document.getElementById('mole');
+        const moleContainer = document.getElementById('moleContainer');
+        const hitCount = document.getElementById('hitCount');
+        const startTimeEl = document.getElementById('startTime');
+        const elapsedTimeEl = document.getElementById('elapsedTime');
+        const roundList = document.getElementById('roundList');
+        let count = 0;
+        let startTime = null;
+        let timer = null;
+        let roundTimes = [];
+        
+        function randomPosition() {
+            const gameArea = document.getElementById('gameArea');
+            const maxX = gameArea.offsetWidth - moleContainer.offsetWidth;
+            const maxY = gameArea.offsetHeight - moleContainer.offsetHeight;
+            const x = Math.floor(Math.random() * maxX);
+            const y = Math.floor(Math.random() * maxY);
+            moleContainer.style.left = x + 'px';
+            moleContainer.style.top = y + 'px';
+        }
+        
+        // 其他函数保持不变...
+        function startTimer() {
+            startTime = new Date();
+            startTimeEl.textContent = startTime.toLocaleTimeString();
+            timer = setInterval(() => {
+                const elapsed = Math.floor((new Date() - startTime) / 1000);
+                elapsedTimeEl.textContent = elapsed;
+            }, 1000);
+        }
+        
+        function resetTimer() {
+            clearInterval(timer);
+            const elapsed = Math.floor((new Date() - startTime) / 1000);
+            roundTimes.push({
+                start: startTime.toLocaleTimeString(),
+                elapsed
+            });
+            updateRoundList();
+            startTimeEl.textContent = '-';
+            elapsedTimeEl.textContent = '0';
+        }
+        
+        function updateRoundList() {
+            roundList.innerHTML = '';
+            roundTimes.forEach((round, index) => {
+                const li = document.createElement('li');
+                li.textContent = `第 ${index + 1} 轮：开始时间 ${round.start}，耗时 ${round.elapsed} 秒`;
+                roundList.appendChild(li);
+            });
+        }
+        
+        // 使用容器处理点击和触摸事件
+        function handleMoleClick() {
+            if (count === 0) {
+                startTimer();
+            }
+            count++;
+            hitCount.textContent = count;
+            if (count % 10 === 0) {
+                count = 0;
+                hitCount.textContent = count;
+                resetTimer();
+                alert('每命中10次，游戏重新开始');
+            }
+            randomPosition();
+        }
+        
+        // 添加点击事件
+        moleContainer.addEventListener('click', handleMoleClick);
+        
+        // 添加触摸事件处理，防止图片在手机端被打开
+        moleContainer.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // 阻止默认触摸行为
+            handleMoleClick();
+        });
+        
+        // 阻止图片的默认行为
+        mole.addEventListener('click', function(e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            e.preventDefault();
+        });
+        
+        mole.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+        });
+        
+        // 初始随机位置
+        randomPosition();
+        setInterval(randomPosition, 1000);
+    </script>
+</body>
+</html>
